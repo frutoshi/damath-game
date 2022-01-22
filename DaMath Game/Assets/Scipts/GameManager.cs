@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public GameObject pauseMenuUI;
     public Animator animPause;
 
+    public static int algo;
+
     public static GameManager Instance
     {
         set;
@@ -77,10 +79,29 @@ public class GameManager : MonoBehaviour
         Debug.Log("Quitted the game!");
     }
 
+    public void Easy()
+    {
+        algo = 1;
+        SceneManager.LoadScene("GameEasy");
+
+    }
+    public void Medium()
+    {
+        algo = 2;
+        SceneManager.LoadScene("GameMedium");
+
+    }
+    public void Hard()
+    {
+        algo = 3;
+        SceneManager.LoadScene("GameHard");
+
+    }
 
     public void StartGame()
     {
         SceneManager.LoadScene("Game");
+        
     }
 
     public void MainMenu()

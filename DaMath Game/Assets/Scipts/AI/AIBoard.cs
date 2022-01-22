@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+using UnityEngine.SceneManagement;
 public class AIBoard : MonoBehaviour
 {
     public static AIBoard Instance { set; get; }
@@ -65,12 +66,25 @@ public class AIBoard : MonoBehaviour
     public GameObject victoryUI;
     public Text winnerText;
 
-
     private void Awake()
     {
         chooseColorCanvas.SetActive(true);
         //scoreCanvas.SetActive(true);
-        
+
+        Scene scene = SceneManager.GetActiveScene();
+        string sceneStr = scene.name;
+        //check
+        if (GameManager.algo == 0)
+        {
+            if (sceneStr == "GameEasy")
+                GameManager.algo = 1;
+            else if (sceneStr == "GameMedium")
+                GameManager.algo = 2;
+            else
+                GameManager.algo = 3;
+        }
+        Debug.Log("ung algo:" + GameManager.algo);
+
         ShuffleArray();
         
     }
@@ -140,13 +154,37 @@ public class AIBoard : MonoBehaviour
         {
             Debug.Log("pumasok ako darleng");
 
-            if (forcedPieces.Count > 0)
-                EasyAI.Jump(pieces, forcedPieces);
+            if (GameManager.algo == 1)
+            {
+                if (forcedPieces.Count > 0)
+                    EasyAI.Jump(pieces, forcedPieces);
+                else
+                    EasyAI.Greedy(pieces, forcedPieces);
+
+
+                TryMove(EasyAI.x1, EasyAI.y1, EasyAI.x2, EasyAI.y2);
+            }
+            else if (GameManager.algo == 2)
+            {
+                if (forcedPieces.Count > 0)
+                    MediumAI.Jump(pieces, forcedPieces);
+                else
+                    MediumAI.Greedy(pieces, forcedPieces);
+
+                TryMove(MediumAI.x1, MediumAI.y1, MediumAI.x2, MediumAI.y2);
+            }
             else
-                EasyAI.Greedy(pieces, forcedPieces);
+            {
+                if (forcedPieces.Count > 0)
+                    EasyAI.Jump(pieces, forcedPieces);
+                else
+                    EasyAI.Greedy(pieces, forcedPieces);
+
+                TryMove(EasyAI.x1, EasyAI.y1, EasyAI.x2, EasyAI.y2);
+            }
 
 
-            TryMove(EasyAI.x1, EasyAI.y1, EasyAI.x2, EasyAI.y2);
+            
 
             Debug.Log("done na ako darleng");
             

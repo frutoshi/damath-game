@@ -115,7 +115,6 @@ public class BoardPvP : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0))
                 TryMove((int)startDrag.x, (int)startDrag.y, x, y);
-
         }
 
     }

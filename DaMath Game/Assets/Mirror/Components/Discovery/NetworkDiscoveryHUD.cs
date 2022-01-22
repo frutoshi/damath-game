@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mirror.Discovery
@@ -11,6 +12,8 @@ namespace Mirror.Discovery
     {
         readonly Dictionary<long, ServerResponse> discoveredServers = new Dictionary<long, ServerResponse>();
         Vector2 scrollViewPos = Vector2.zero;
+
+        private int attempt = 3;
 
         public NetworkDiscovery networkDiscovery;
 
@@ -26,7 +29,7 @@ namespace Mirror.Discovery
         }
 #endif
 
-        void OnGUI()
+        /*void OnGUI()
         {
             if (NetworkManager.singleton == null)
                 return;
@@ -36,9 +39,9 @@ namespace Mirror.Discovery
 
             if (NetworkServer.active || NetworkClient.active)
                 StopButtons();
-        }
+        }*/
 
-        void DrawGUI()
+        /*void DrawGUI()
         {
             GUILayout.BeginArea(new Rect(10, 10, 300, 500));
             GUILayout.BeginHorizontal();
@@ -80,9 +83,9 @@ namespace Mirror.Discovery
 
             GUILayout.EndScrollView();
             GUILayout.EndArea();
-        }
+        }*/
 
-        void StopButtons()
+        /*void StopButtons()
         {
             GUILayout.BeginArea(new Rect(10, 40, 100, 25));
 
@@ -115,12 +118,67 @@ namespace Mirror.Discovery
             }
 
             GUILayout.EndArea();
+        }*/
+        public void StopHostLan()
+        {
+            NetworkManager.singleton.StopHost();
+            networkDiscovery.StopDiscovery();
+            Debug.Log("Stopping the Host Lan....");
+        }
+
+        public void StopJoinAsClient()
+        {
+            NetworkManager.singleton.StopClient();
+            networkDiscovery.StopDiscovery();
+            Debug.Log("Stopping the Client Lan....");
+        }
+
+        public void StartHostLan()
+        {
+            discoveredServers.Clear();
+            NetworkManager.singleton.StartHost();
+            networkDiscovery.AdvertiseServer();
+            Debug.Log("Host started and advertising to the network...");
+        }
+
+        public void JoinAsClient()
+        {
+            attempt = 3;
+            discoveredServers.Clear();
+            Debug.Log("Joining as client . . .");
+            StartCoroutine(TryJoin());
+        }
+
+        IEnumerator TryJoin()
+        {
+            while (attempt > 0)
+            {
+                Debug.Log($"Attempting to Join to open server . . . Retry : {attempt}");
+                if (attempt == 1)
+                {
+                    StopAllCoroutines();
+                }
+                if (discoveredServers.Count > 0)
+                {
+                    IEnumerator enumerator = discoveredServers.Keys.GetEnumerator();
+                    enumerator.MoveNext();
+                    Connect(discoveredServers[(long)enumerator.Current]);
+                    StopAllCoroutines();
+                }
+                else
+                {
+                    networkDiscovery.StartDiscovery();
+                }
+                attempt--;
+                yield return new WaitForSeconds(1f);
+            }
         }
 
         void Connect(ServerResponse info)
         {
             networkDiscovery.StopDiscovery();
             NetworkManager.singleton.StartClient(info.uri);
+            Debug.Log($"Successfully join to {info.uri}");
         }
 
         public void OnDiscoveredServer(ServerResponse info)

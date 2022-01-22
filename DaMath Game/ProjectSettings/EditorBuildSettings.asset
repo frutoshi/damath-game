@@ -9,9 +9,18 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 48384c3efe6743347a823c22cb1ac161
   - enabled: 1
+    path: Assets/Scenes/GameEasy.unity
+    guid: 2ddb7cece56c28b4b9f39ffe1a5ccf16
+  - enabled: 1
+    path: Assets/Scenes/GameMedium.unity
+    guid: a69a8dd7e8c5846478723fd2e9a364cd
+  - enabled: 1
     path: Assets/Scenes/Game.unity
     guid: 89719880d8a4f9047991a779eafa3d70
   - enabled: 1
     path: Assets/Scenes/PlayonSameDevice.unity
     guid: 30c79d71029ed7640a30df1573ad7ff7
+  - enabled: 1
+    path: Assets/Scenes/GameLAN.unity
+    guid: 43689ff1400270a43b64c54286308f8e
   m_configObjects: {}
