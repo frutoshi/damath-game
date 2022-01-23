@@ -84,8 +84,6 @@ public class BoardPvP : MonoBehaviour
         forcedPieces = new List<Pieces>();
         //GenerateBoard();
 
-
-
     }
 
     // Update is called once per frame
