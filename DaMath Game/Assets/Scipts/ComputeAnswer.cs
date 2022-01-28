@@ -143,7 +143,8 @@ public class ComputeAnswer : MonoBehaviour
             rightAnswerUI = correctUI.GetComponentInChildren<Text>();
             rightAnswerUI.text = rightAnswer.ToString();
             correctUI.SetActive(true);
-          
+            FindObjectOfType<_AudioManager>().Play("Correct");
+
             //checker lang
             Debug.Log("TAMA");
 
@@ -156,7 +157,8 @@ public class ComputeAnswer : MonoBehaviour
             rightAnswerUI = incorrectUI.GetComponentInChildren<Text>();
             rightAnswerUI.text = rightAnswer.ToString();
             incorrectUI.SetActive(true);
-           
+            FindObjectOfType<_AudioManager>().Play("Incorrect");
+
             //checker lang
             Debug.Log("DUH EDI MALI");
 

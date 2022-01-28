@@ -63,16 +63,19 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
-    public void PlayBtn()
+   /* public void PlayEasy()
     {
         SceneManager.LoadScene(1);
         // StartCoroutine(LoadSceneAsynchronously(levelindex));
-    }
+    }*/
+
+ 
 
     public void SameDeviceBtn()
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(4);
     }
+
     public void ExitBtn()
     {
         Application.Quit();
@@ -108,6 +111,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         pauseMenuUI.SetActive(false);
+      
         SceneManager.LoadScene(0);
     }
     IEnumerator PlayAndDisappear(string ani)

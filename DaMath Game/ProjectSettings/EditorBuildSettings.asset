@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Game.unity
     guid: 89719880d8a4f9047991a779eafa3d70
   - enabled: 1
-    path: Assets/Scenes/PlayonSameDevice.unity
+    path: Assets/Scenes/PVP/PlayonSameDevice.unity
     guid: 30c79d71029ed7640a30df1573ad7ff7
   - enabled: 1
     path: Assets/Scenes/GameLAN.unity

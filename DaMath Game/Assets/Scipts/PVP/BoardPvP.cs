@@ -15,7 +15,8 @@ public class BoardPvP : MonoBehaviour
     public GameObject[] redPieces;
     public GameObject[] bluePieces;
 
-    public GameObject highlightsContainer;
+    public GameObject forcedPieceHighlightsContainer;
+    public GameObject selectedPieceHighlightContainer;
 
     public CanvasGroup alertCanvas;
     private float lastAlert;
@@ -56,8 +57,12 @@ public class BoardPvP : MonoBehaviour
 
     public GameObject scoreCanvas;
     public GameObject chooseColorCanvas;
+    public GameObject p1Red;
+    public GameObject p1Blue;
+    public GameObject p2Red;
+    public GameObject p2Blue;
 
-    //private LANClient client;
+
 
 
     private void Awake()
@@ -70,7 +75,12 @@ public class BoardPvP : MonoBehaviour
     }
     private void Start()
     {
-        foreach(Transform t in highlightsContainer.transform)
+        foreach(Transform t in forcedPieceHighlightsContainer.transform)
+        {
+            t.position = Vector3.down * 100;
+        }
+
+        foreach (Transform t in selectedPieceHighlightContainer.transform)
         {
             t.position = Vector3.down * 100;
         }
@@ -89,10 +99,8 @@ public class BoardPvP : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (Transform t in highlightsContainer.transform)
-        {
-            t.Rotate(Vector3.up * 90 * Time.deltaTime);
-        }
+        RotatedForcedPieceHighlight();
+        RotatedSelectedPieceHighlight();
 
         UpdateAlert();
         UpdateTouch();
@@ -108,8 +116,14 @@ public class BoardPvP : MonoBehaviour
             if (selectedPiece != null)
                 UpdatePieceDrag(selectedPiece);
 
+
             if (Input.GetMouseButtonDown(0))
+            {
                 SelectPiece(x, y);
+                SelectedPieceHighlight();
+                
+            }
+                
 
             if (Input.GetMouseButtonUp(0))
                 TryMove((int)startDrag.x, (int)startDrag.y, x, y);
@@ -121,10 +135,14 @@ public class BoardPvP : MonoBehaviour
         if (color == "red")
         {
             isRed = true;
+            p1Red.SetActive(true);
+            /*RedTurn.SetActive(true);*/
         }
         else
         {
             isRed = false;
+            p1Blue.SetActive(true);
+           /* BlueTurn.SetActive(true);*/
         }
 
         isPlayer1Color = true;
@@ -147,7 +165,7 @@ public class BoardPvP : MonoBehaviour
             {
                 selectedPiece = p;
                 startDrag = touchOver;
-
+                FindObjectOfType<_AudioManager>().Play("Select");
                 //checking lang to kung anong chip at kung may operator ba
                 Debug.Log(selectedPiece.tag);
                 Debug.Log(selectedPiece.hadOperator);
@@ -161,6 +179,7 @@ public class BoardPvP : MonoBehaviour
 
                 selectedPiece = p;
                 startDrag = touchOver;
+                FindObjectOfType<_AudioManager>().Play("Select");
             }
         }
     }
@@ -226,10 +245,12 @@ public class BoardPvP : MonoBehaviour
             Pieces p = gameObj.GetComponent<Pieces>();
             pieces[x, y] = p;
             MovePieces(p, x, y);
-
+            
             if (pieces[x, y].isRed && isRed)
             {
                 pieces[x, y].isPlayer1Color = true;
+               /* RedTurn.SetActive(true);
+                BlueTurn.SetActive(false);*/
             }
         }
         else
@@ -243,6 +264,8 @@ public class BoardPvP : MonoBehaviour
             if (!pieces[x, y].isRed && !isRed)
             {
                 pieces[x, y].isPlayer1Color = true;
+                /*BlueTurn.SetActive(true);
+                RedTurn.SetActive(false);*/
             }
         }
 
@@ -308,7 +331,8 @@ public class BoardPvP : MonoBehaviour
            
             startDrag = Vector2.zero;
             selectedPiece = null;
-            Highlight();
+            ForcedPieceHighlight();
+            Debug.Log("FORCED PIECE 1");
             return;
         }
 
@@ -320,7 +344,8 @@ public class BoardPvP : MonoBehaviour
                 MovePieces(selectedPiece, x1, y1);
                 startDrag = Vector2.zero;
                 selectedPiece = null;
-                Highlight();
+                ForcedPieceHighlight();
+                Debug.Log("FORCED PIECE 2");
                 return;
             }
 
@@ -339,6 +364,8 @@ public class BoardPvP : MonoBehaviour
                         presentPiece = selectedPiece;
                         previousPiece = p;
                         Destroy(p.gameObject);
+                        FindObjectOfType<_AudioManager>().Play("Capture");
+                        selectedPieceHighlightContainer.SetActive(false);
                         hasDestroyed = true;
                         hasJumped = true;
                     }
@@ -348,16 +375,18 @@ public class BoardPvP : MonoBehaviour
                 if (forcedPieces.Count != 0 && !hasDestroyed)
                 {
                     MovePieces(selectedPiece, x1, y1);
+                    FindObjectOfType<_AudioManager>().Play("Move");
                     startDrag = Vector2.zero;
                     selectedPiece = null;
-                    Highlight();
+                    ForcedPieceHighlight();
+                    Debug.Log("FORCED PIECE 3");
                     return;
                 }
                 //piece moved
                 pieces[x2, y2] = selectedPiece;
                 pieces[x1, y1] = null;
                 MovePieces(selectedPiece, x2, y2);
-               
+                FindObjectOfType<_AudioManager>().Play("Move");
                 EndTurn();
 
             }
@@ -367,7 +396,9 @@ public class BoardPvP : MonoBehaviour
                 MovePieces(selectedPiece, x1, y1);
                 startDrag = Vector2.zero;
                 selectedPiece = null;
-                Highlight();
+                ForcedPieceHighlight();
+                Debug.Log("FORCED PIECE 4");
+                selectedPieceHighlightContainer.SetActive(false);
                 Debug.Log("PIECE RETURNED");
                 return;
             }
@@ -391,12 +422,14 @@ public class BoardPvP : MonoBehaviour
             {
                 selectedPiece.isDama = true;    
                 selectedPiece.RotateDamaPiece();
+                FindObjectOfType<_AudioManager>().Play("Dama");
             }
             //black piece will become dama
             else if (!selectedPiece.isPlayer1Color && !selectedPiece.isDama && y == 0)
             {
                 selectedPiece.isDama = true;
                 selectedPiece.RotateDamaPiece();
+                FindObjectOfType<_AudioManager>().Play("Dama");
             }
         }
 
@@ -427,6 +460,34 @@ public class BoardPvP : MonoBehaviour
         isPlayer1Color = !isPlayer1Color;
         hasDestroyed = false;
         hasMultipleJumped = false;
+        selectedPieceHighlightContainer.SetActive(false);
+        if (isPlayer1Color == !isRed && isPlayer1Turn)
+        {
+            p1Blue.SetActive(true);
+            p2Red.SetActive(false);
+            //p1Red.SetActive(false);
+            //p2Blue.SetActive(false);
+            /*BlueTurn.SetActive(true);
+            RedTurn.SetActive(false);*/
+        }
+        if(!isPlayer1Color == !isRed && !isPlayer1Turn)
+        {
+            p2Red.SetActive(true);
+            p1Blue.SetActive(false);
+        }
+
+        if(isPlayer1Color == isRed && isPlayer1Turn)
+        {
+            p1Red.SetActive(true);
+            p2Blue.SetActive(false);
+        }
+        if(!isPlayer1Color == isRed && !isPlayer1Turn)
+        {
+            p2Blue.SetActive(true);
+            p1Red.SetActive(false);
+        }
+
+
 
         hasJumped = false;
         //CheckVictory();
@@ -494,6 +555,7 @@ public class BoardPvP : MonoBehaviour
 
         questionUI.text = num1 + " " + op + " " + num2 + " = ?";
         computeCanvas.SetActive(true);
+        FindObjectOfType<_AudioManager>().Play("Question");
         return;
     }
     private void CheckVictory()
@@ -503,15 +565,17 @@ public class BoardPvP : MonoBehaviour
         {
             Time.timeScale = 1f;
             victoryUI.SetActive(true);
-            winnerText.text = "WHITE";
-            Debug.Log("the winner is : WHITE");
+            FindObjectOfType<_AudioManager>().Play("Victory");
+            winnerText.text = "RED";
+            Debug.Log("the winner is : RED");
         }
         else
         {
             Time.timeScale = 1f;
             victoryUI.SetActive(true);
-            winnerText.text = "BLACK";
-            Debug.Log("the winner is : BLACK");
+            FindObjectOfType<_AudioManager>().Play("Victory");
+            winnerText.text = "BLUE";
+            Debug.Log("the winner is : BLUE");
         }
 
     }
@@ -523,7 +587,8 @@ public class BoardPvP : MonoBehaviour
         if (pieces[x, y].isForceToMove(pieces, x, y))
             forcedPieces.Add(pieces[x, y]);
         Debug.Log("Piece Moved");
-        Highlight();
+        ForcedPieceHighlight();
+        Debug.Log("FORCED PIECE 5");
         return forcedPieces;
     }
     private List<Pieces> ScanForPossibleMove()
@@ -540,34 +605,62 @@ public class BoardPvP : MonoBehaviour
                         forcedPieces.Add(pieces[i, j]);
                         //Debug.Log("Jump Piece" + " " );
                     }
-                        
 
-        Highlight();
+
+        ForcedPieceHighlight();
+        Debug.Log("FORCED PIECE 6");
         return forcedPieces;
     }
-    private void Highlight()
+    private void ForcedPieceHighlight()
     {
-        foreach (Transform t in highlightsContainer.transform)
+        foreach (Transform t in forcedPieceHighlightsContainer.transform)
         {
             t.position = Vector3.down * 100;
         }
 
         if (forcedPieces.Count > 0)
         {
-            highlightsContainer.SetActive(true);
-            highlightsContainer.transform.GetChild(0).position = forcedPieces[0].transform.position + Vector3.up * 0.015f + highlightPieceOffset;
+            forcedPieceHighlightsContainer.SetActive(true);
+            forcedPieceHighlightsContainer.transform.GetChild(0).position = forcedPieces[0].transform.position + Vector3.up * 0.015f + highlightPieceOffset;
             Debug.Log("Jump Piece" + " " + forcedPieces[0].tag);
         }
             
 
         if (forcedPieces.Count > 1)
         {
-            highlightsContainer.SetActive(true);
-            highlightsContainer.transform.GetChild(1).position = forcedPieces[1].transform.position + Vector3.up * 0.015f + highlightPieceOffset;
+            forcedPieceHighlightsContainer.SetActive(true);
+            forcedPieceHighlightsContainer.transform.GetChild(1).position = forcedPieces[1].transform.position + Vector3.up * 0.015f + highlightPieceOffset;
             Debug.Log("Jump Piece" + " " + forcedPieces[1].tag);
         }
-            
+
+
     }
+
+    private void RotatedForcedPieceHighlight()
+    {
+        foreach (Transform t in forcedPieceHighlightsContainer.transform)
+        {
+            t.Rotate(Vector3.up * 90 * Time.deltaTime);
+        }
+    }
+
+    private void SelectedPieceHighlight()
+    {
+        if (selectedPiece != null)
+        {
+            selectedPieceHighlightContainer.SetActive(true);
+            selectedPieceHighlightContainer.transform.GetChild(0).position = selectedPiece.transform.position + Vector3.up * 0.015f + highlightPieceOffset;
+        }
+    }
+
+    private void RotatedSelectedPieceHighlight()
+    {
+        foreach (Transform t in selectedPieceHighlightContainer.transform)
+        {
+            t.Rotate(Vector3.up * 90 * Time.deltaTime);
+        }
+    }
+
     public void Alert(string text)
     {
         alertCanvas.GetComponentInChildren<TMP_Text>().text = text;

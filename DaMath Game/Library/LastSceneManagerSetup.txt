@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/AI/GameHard.unity
+- path: Assets/Scenes/PVP/PlayonSameDevice.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
