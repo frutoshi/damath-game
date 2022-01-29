@@ -136,13 +136,11 @@ public class BoardPvP : MonoBehaviour
         {
             isRed = true;
             p1Red.SetActive(true);
-            /*RedTurn.SetActive(true);*/
         }
         else
         {
             isRed = false;
             p1Blue.SetActive(true);
-           /* BlueTurn.SetActive(true);*/
         }
 
         isPlayer1Color = true;
@@ -465,10 +463,6 @@ public class BoardPvP : MonoBehaviour
         {
             p1Blue.SetActive(true);
             p2Red.SetActive(false);
-            //p1Red.SetActive(false);
-            //p2Blue.SetActive(false);
-            /*BlueTurn.SetActive(true);
-            RedTurn.SetActive(false);*/
         }
         if(!isPlayer1Color == !isRed && !isPlayer1Turn)
         {
@@ -565,17 +559,19 @@ public class BoardPvP : MonoBehaviour
         {
             Time.timeScale = 1f;
             victoryUI.SetActive(true);
+            Clear();
             FindObjectOfType<_AudioManager>().Play("Victory");
-            winnerText.text = "RED";
-            Debug.Log("the winner is : RED");
+            winnerText.text = "PLAYER 1";
+            Debug.Log("the winner is : PLAYER 1");
         }
         else
         {
             Time.timeScale = 1f;
             victoryUI.SetActive(true);
+            Clear();
             FindObjectOfType<_AudioManager>().Play("Victory");
-            winnerText.text = "BLUE";
-            Debug.Log("the winner is : BLUE");
+            winnerText.text = "PLAYER 2";
+            Debug.Log("the winner is : PLAYER 2");
         }
 
     }
@@ -695,6 +691,17 @@ public class BoardPvP : MonoBehaviour
             chooseColorCanvas.SetActive(false); // deactivate object
 
         }
+    }
+
+    private void Clear()
+    {
+        p1Blue.SetActive(false);
+        p1Red.SetActive(false);
+        p2Blue.SetActive(false);
+        p1Blue.SetActive(false);
+        computeCanvas.SetActive(false);
+        forcedPieceHighlightsContainer.SetActive(false);
+        selectedPieceHighlightContainer.SetActive(false);
     }
 
 }

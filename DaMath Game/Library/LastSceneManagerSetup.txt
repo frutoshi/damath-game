@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/PVP/PlayonSameDevice.unity
+- path: Assets/Scenes/AI/GameEasy.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

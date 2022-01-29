@@ -516,22 +516,26 @@ public class AIBoard : MonoBehaviour
         hasDestroyed = false;
         hasMultipleJumped = false;
         selectedPieceHighlightContainer.SetActive(false);
-        if(isPlayer1Color == !isRed)
+        if (isPlayer1Color == !isRed && isPlayer1Turn)
         {
-            p1Red.SetActive(false);
-            compBlue.SetActive(false);
-            compRed.SetActive(true);
             p1Blue.SetActive(true);
-            
-
-        }
-        else if(isPlayer1Color == isRed)
-        {
-            p1Blue.SetActive(false);
             compRed.SetActive(false);
+        }
+        if (!isPlayer1Color == !isRed && !isPlayer1Turn)
+        {
+            compRed.SetActive(true);
+            p1Blue.SetActive(false);
+        }
+
+        if (isPlayer1Color == isRed && isPlayer1Turn)
+        {
             p1Red.SetActive(true);
+            compBlue.SetActive(false);
+        }
+        if (!isPlayer1Color == isRed && !isPlayer1Turn)
+        {
             compBlue.SetActive(true);
-            
+            p1Red.SetActive(false);
         }
         hasJumped = false;
 
@@ -591,18 +595,20 @@ public class AIBoard : MonoBehaviour
         if(ComputeAnswer.whitePoints > ComputeAnswer.blackPoints)
         {
             Time.timeScale = 1f;
+            Clear();
             victoryUI.SetActive(true);
             FindObjectOfType<_AudioManager>().Play("Victory");
-            winnerText.text = "RED";
-            Debug.Log("the winner is : RED");
+            winnerText.text = "PLAYER 1";
+            Debug.Log("the winner is : PLAYER 1");
         }
         else
         {
             Time.timeScale = 1f;
+            Clear();
             victoryUI.SetActive(true);
             FindObjectOfType<_AudioManager>().Play("Victory");
-            winnerText.text = "BLUE";
-            Debug.Log("the winner is : BLUE");
+            winnerText.text = "COMPUTER";
+            Debug.Log("the winner is : COMPUTER");
         }
            
     }
@@ -747,6 +753,17 @@ public class AIBoard : MonoBehaviour
             chooseColorCanvas.SetActive(false); // deactivate object
 
         }
+    }
+
+    private void Clear()
+    {
+        p1Blue.SetActive(false);
+        p1Red.SetActive(false);
+        compBlue.SetActive(false);
+        compRed.SetActive(false);
+        computeCanvas.SetActive(false);
+        forcedPieceHighlightsContainer.SetActive(false);
+        selectedPieceHighlightContainer.SetActive(false);
     }
 }
 
